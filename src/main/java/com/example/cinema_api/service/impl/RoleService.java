@@ -6,6 +6,7 @@ import com.example.cinema_api.dto.RoleRequest;
 import com.example.cinema_api.dto.RoleResponse;
 import com.example.cinema_api.entity.Permission;
 import com.example.cinema_api.entity.Roles;
+import com.example.cinema_api.exception.ResourceNotFoundException;
 import com.example.cinema_api.repository.PermissionRepository;
 import com.example.cinema_api.repository.RolesRepository;
 import com.example.cinema_api.service.IRoleService;
@@ -17,7 +18,7 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-//TODO: ARREGLAR AQUI COSAS
+//TODO: CREAR METODO PARA NO TENER QUE TENER TANTO CODIGO REPETIDO
 
 @Service
 @RequiredArgsConstructor
@@ -27,93 +28,75 @@ public class RoleService implements IRoleService {
 
     @Override
     public RoleResponse createRole(RoleRequest roleRequest) {
-        Set<Permission> permissionsList = new HashSet<>();
-        Permission readPermission;
-
-        for (PermissionIdRequest permission : roleRequest.getPermissions()) {
-            readPermission = permissionRepository.findById(permission.getId()).orElseThrow(() -> new RuntimeException("Permission not found"));
-            permissionsList.add(readPermission);
-        }
-
         Roles roles = new Roles();
         roles.setRole(roleRequest.getRole());
-        roles.setPermissionsList(permissionsList);
+        roles.setPermissionsList(resolvePermissions(roleRequest.getPermissions()));
         Roles savedRoles = rolesRepository.save(roles);
 
-        Set<PermissionResponse> savedPermissionsList = new HashSet<>();
-
-        for(Permission permission : savedRoles.getPermissionsList()) {
-            PermissionResponse response = new PermissionResponse();
-            response.setId(permission.getId());
-            response.setPermission(permission.getPermissionName());
-            savedPermissionsList.add(response);
-        }
-        RoleResponse roleResponse = new RoleResponse();
-        roleResponse.setId(savedRoles.getId());
-        roleResponse.setRole(savedRoles.getRole());
-        roleResponse.setPermissions(savedPermissionsList);
-
-        return roleResponse;
+        return toRoleResponse(savedRoles);
     }
 
     @Override
     public RoleResponse updateRole(Long id, RoleRequest roleRequest) {
-        Roles roles = rolesRepository.findById(id).orElseThrow(() -> new RuntimeException("Role not found"));
+        Roles roles = rolesRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Role not found"));
 
         if(roleRequest.getRole() != null) {
             roles.setRole(roleRequest.getRole());
         }
+        if(roleRequest.getPermissions() != null) {
+            roles.setPermissionsList(resolvePermissions(roleRequest.getPermissions()));
+        }
         Roles savedRoles = rolesRepository.save(roles);
 
-        Set<PermissionResponse> permissionsListt = new HashSet<>();
-        for(Permission permission : savedRoles.getPermissionsList()) {
-            PermissionResponse response = new PermissionResponse();
-            response.setId(permission.getId());
-            response.setPermission(permission.getPermissionName());
-            permissionsListt.add(response);
-        }
-
-        RoleResponse roleResponse = new RoleResponse();
-        roleResponse.setId(savedRoles.getId());
-        roleResponse.setRole(savedRoles.getRole());
-        roleResponse.setPermissions(permissionsListt);
-
-        return roleResponse;
+        return toRoleResponse(savedRoles);
     }
 
     @Override
     public List<RoleResponse> findAllRoles() {
         List<Roles> rolesList = rolesRepository.findAll();
         List<RoleResponse> roleResponseList = new ArrayList<>();
-        for (Roles roles : rolesList) {
-            Set<PermissionResponse> permissionsList = new HashSet<>();
 
-            for (Permission permission : roles.getPermissionsList()) {
-                PermissionResponse response = new PermissionResponse();
-                response.setId(permission.getId());
-                response.setPermission(permission.getPermissionName());
-                permissionsList.add(response);
-            }
-            RoleResponse roleResponse = new RoleResponse();
-            roleResponse.setId(roles.getId());
-            roleResponse.setRole(roles.getRole());
-            roleResponse.setPermissions(permissionsList);
-
-            roleResponseList.add(roleResponse);
-
+        for(Roles roles : rolesList) {
+            roleResponseList.add(toRoleResponse(roles));
         }
         return roleResponseList;
     }
 
     @Override
     public RoleResponse findRoleById(Long id) {
-        Roles roles = rolesRepository.findById(id).orElseThrow(() -> new RuntimeException("Role not found"));
+        Roles roles = rolesRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Role not found"));
+        return toRoleResponse(roles);
+    }
+
+    @Override
+    public void deleteRole(Long id) {
+        if(!rolesRepository.existsById(id)) {
+            throw new ResourceNotFoundException("Role not found");
+        }
+        rolesRepository.deleteById(id);
+    }
+
+
+    //TODO: documentar mejor este metodo
+    private Set<Permission> resolvePermissions(Set<PermissionIdRequest> permissionIdRequests) {
+        Set<Permission> permissions = new HashSet<>();
+        for(PermissionIdRequest permission : permissionIdRequests ) {
+            Permission readPermission = permissionRepository.findById(permission.getId())
+                    .orElseThrow(() -> new ResourceNotFoundException("Permission not found"));
+            permissions.add(readPermission);
+        }
+        return permissions;
+    }
+
+
+    //TODO: documentar mejor este metodo
+    private RoleResponse toRoleResponse(Roles roles) {
         Set<PermissionResponse> permissionsList = new HashSet<>();
 
-        for(Permission p:  roles.getPermissionsList()) {
+        for(Permission permission : roles.getPermissionsList()) {
             PermissionResponse response = new PermissionResponse();
-            response.setId(p.getId());
-            response.setPermission(p.getPermissionName());
+            response.setId(permission.getId());
+            response.setPermission(permission.getPermissionName());
             permissionsList.add(response);
         }
 
@@ -124,8 +107,4 @@ public class RoleService implements IRoleService {
         return roleResponse;
     }
 
-    @Override
-    public void deleteRole(Long id) {
-        rolesRepository.deleteById(id);
-    }
 }

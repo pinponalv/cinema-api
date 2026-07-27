@@ -2,7 +2,7 @@ package com.example.cinema_api.controller;
 
 import com.example.cinema_api.dto.PermissionRequest;
 import com.example.cinema_api.dto.PermissionResponse;
-import com.example.cinema_api.service.impl.PermissionService;
+import com.example.cinema_api.service.IPermissionService;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,7 +19,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class PermissionController {
 
-    private final PermissionService permissionService;
+    private final IPermissionService permissionService;
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping
@@ -43,7 +43,7 @@ public class PermissionController {
 
     @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/{id}")
-    public ResponseEntity<PermissionResponse> deletePermission(@PathVariable Long id) {
+    public ResponseEntity<Void> deletePermission(@PathVariable Long id) {
         permissionService.deletePermission(id);
         return ResponseEntity.noContent().build();
     }

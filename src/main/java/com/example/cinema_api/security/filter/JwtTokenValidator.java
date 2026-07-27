@@ -32,17 +32,9 @@ public class JwtTokenValidator extends OncePerRequestFilter {
                                     @NonNull HttpServletResponse response,
                                     @NonNull FilterChain chain) throws ServletException, IOException {
         String header = request.getHeader(HttpHeaders.AUTHORIZATION);
-//        System.out.println("HEADER: " + header);
-//
-//        String token = header.substring(7);
-//
-//        System.out.println("TOKEN: " + token);
 
         if(header != null && header.startsWith("Bearer ")) {
-            //le quito el bearer
             String token = header.substring(7);
-            //header = header.substring(7);
-
 
             try {
                 //validate token
@@ -53,8 +45,8 @@ public class JwtTokenValidator extends OncePerRequestFilter {
                 String authorities = jwtUtils.getSpecificClaim(decodedJWT, "authorities").asString();
 
                 //es una cadena de caracteres separadas por comas y lo paso a una lista
-                Collection<? extends GrantedAuthority> authoritiesList = AuthorityUtils.commaSeparatedStringToAuthorityList(authorities);
-
+                Collection<? extends GrantedAuthority> authoritiesList = AuthorityUtils
+                        .commaSeparatedStringToAuthorityList(authorities);
 
                 //create new instancia of authentication and add email and permissions
                 Authentication authentication = new UsernamePasswordAuthenticationToken(user, null, authoritiesList);

@@ -44,8 +44,6 @@ public class JwtUtils {
                 .withJWTId(UUID.randomUUID().toString()) //genero un id random y lo paso a string
                 .withNotBefore(new Date()) //valido para usar cuando se crea
                 .sign(algorithm);
-
-        //System.out.println(generateToken);
         return generateToken;
     }
 

@@ -49,7 +49,8 @@ public class CustomUserDetailsService implements UserDetailsService {
          * SimpleGrantedAuthority apartir del nombre del permiso que trae
          * **/
         user.getRoles().stream().flatMap(role -> role.getPermissionsList().stream())
-                .forEach(permission -> authoritiesList.add(new SimpleGrantedAuthority(permission.getPermissionName())));
+                .forEach(permission -> authoritiesList
+                        .add(new SimpleGrantedAuthority(permission.getPermissionName())));
 
 
         //retorno el usuario en formato user de spring security
@@ -77,8 +78,8 @@ public class CustomUserDetailsService implements UserDetailsService {
     }
 
     public AuthResponse loginUser(AuthLoginRequest authLoginRequest) {
-        String email = authLoginRequest.email();
-        String password = authLoginRequest.password();
+        String email = authLoginRequest.getEmail();
+        String password = authLoginRequest.getPassword();
 
         Authentication authentication = this.authenticate(email, password);
 
