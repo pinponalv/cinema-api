@@ -6,6 +6,9 @@ import com.example.cinema_api.entity.Movies;
 import com.example.cinema_api.repository.MoviesRepository;
 import com.example.cinema_api.service.IMoviesService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.ArrayList;
@@ -60,11 +63,14 @@ public class MovieService implements IMoviesService {
         );
     }
 
+    // Pageable llega desde el controller (page, size, sort) e indica qué "porción" de resultados traer.
     @Override
-    public List<MovieResponse> findAllMovies() {
-        List<Movies> getMovies = moviesRepository.findAll();
+    public Page<MovieResponse> findAllMovies(Pageable pageable) {
+        // findAll(pageable) le pide a la base de datos solo esa porción (LIMIT/OFFSET), no toda la tabla.
+        Page<Movies> moviesPage = moviesRepository.findAll(pageable);
         List<MovieResponse> responseMovieDTOList = new ArrayList<>();
-        for (Movies movies : getMovies) {
+
+        for (Movies movies : moviesPage.getContent()) {
             MovieResponse responseMovieDTO = new MovieResponse(
                     movies.getId(),
                     movies.getTitle(),
@@ -72,7 +78,7 @@ public class MovieService implements IMoviesService {
             );
             responseMovieDTOList.add(responseMovieDTO);
         }
-        return responseMovieDTOList;
+        return new PageImpl<>(responseMovieDTOList, pageable, moviesPage.getTotalElements());
     }
 
     @Override

@@ -3,6 +3,9 @@ package com.example.cinema_api.controller;
 import com.example.cinema_api.dto.PermissionRequest;
 import com.example.cinema_api.dto.PermissionResponse;
 import com.example.cinema_api.service.IPermissionService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -21,6 +24,11 @@ public class PermissionController {
 
     private final IPermissionService permissionService;
 
+    @Operation(summary = "Register permission")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok request"),
+            @ApiResponse(responseCode = "400", description = "Bad request")
+    })
     @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping
     public ResponseEntity<PermissionResponse> createPermission(@Valid  @RequestBody PermissionRequest permissionRequest) {
@@ -28,6 +36,12 @@ public class PermissionController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
+    @Operation(summary = "Update permission")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok request"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "404", description = "Not found")
+    })
     @PreAuthorize("hasAnyRole('ADMIN')")
     @PutMapping("/{id}")
     public ResponseEntity<PermissionResponse> updatePermission(@PathVariable Long id, @Valid  @RequestBody PermissionRequest permissionRequest) {
@@ -35,12 +49,23 @@ public class PermissionController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
+    @Operation(summary = "Find all permission")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok request"),
+            @ApiResponse(responseCode = "204", description = "Not content"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @PreAuthorize("hasAnyRole('ADMIN','MOD')")
     @GetMapping
     public ResponseEntity<List<PermissionResponse>> findAllPermissions() {
         return ResponseEntity.status(HttpStatus.OK).body(permissionService.findAllPermissions());
     }
 
+    @Operation(summary = "Delete a movie")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Not content"),
+            @ApiResponse(responseCode = "404", description = "Not found")
+    })
     @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deletePermission(@PathVariable Long id) {

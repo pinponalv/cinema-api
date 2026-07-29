@@ -6,6 +6,7 @@ import com.example.cinema_api.dto.UserResponse;
 import java.util.List;
 
 public interface IUserService {
+    UserResponse registerUser(UserRequest userRequest);
     UserResponse createUser(UserRequest userRequest);
     UserResponse updateUser(Long id,UserRequest userRequest);
     List<UserResponse> getAllUsers();

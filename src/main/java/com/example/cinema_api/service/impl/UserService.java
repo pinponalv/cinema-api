@@ -3,15 +3,14 @@ package com.example.cinema_api.service.impl;
 import com.example.cinema_api.dto.*;
 import com.example.cinema_api.entity.Roles;
 import com.example.cinema_api.entity.UserSec;
+import com.example.cinema_api.exception.DuplicateResourceException;
+import com.example.cinema_api.exception.InvalidRequestException;
 import com.example.cinema_api.exception.ResourceNotFoundException;
 import com.example.cinema_api.mapper.UserMapper;
 import com.example.cinema_api.repository.RolesRepository;
 import com.example.cinema_api.repository.UserRepository;
 import com.example.cinema_api.service.IUserService;
-import com.sun.jdi.request.DuplicateRequestException;
 import lombok.RequiredArgsConstructor;
-import org.springframework.context.annotation.Bean;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -28,26 +27,41 @@ public class UserService implements IUserService {
     private final UserMapper userMapper;
     private final PasswordEncoder passwordEncoder; //inyecto passwordEncoder de spring security
 
-    //TODO: Una opcion que tengo al crear un usuario es que al crear automaticamente setearle el rol como USER
+    @Override
+    public UserResponse registerUser(UserRequest userRequest) {
+        validateUser(userRequest);
+
+        //busco el rol por default que le quiero pasar
+        Roles role = rolesRepository.findById(2L).orElseThrow(() -> new ResourceNotFoundException("rol not found"));
+
+        UserSec user = new UserSec();
+        user.setEmail(userRequest.getEmail());
+        user.setUsername(userRequest.getUsername());
+        user.setPassword(encriptPassword(userRequest.getPassword()));
+        user.getRoles().add(role);
+
+        UserSec savedUser = userRepository.save(user);
+
+        return userMapper.toUserDTO(savedUser);
+    }
+
     @Override
     public UserResponse createUser(UserRequest userRequest) {
-        if(userRepository.existsByEmail(userRequest.getEmail())) {
-            throw new DuplicateRequestException("Email already exists");
-        }
-        if(userRepository.existsByUsername(userRequest.getUsername())) {
-            throw new DuplicateRequestException("Username already exists");
+        validateUser(userRequest);
+
+        if(userRequest.getRoles() == null || userRequest.getRoles().isEmpty()){
+            throw new InvalidRequestException("specify a role");
         }
 
-        //Obtengo los roles
         Set<Roles> roles = resolveRoles(userRequest.getRoles());
 
         UserSec user  = new UserSec();
         user.setEmail(userRequest.getEmail());
         user.setUsername(userRequest.getUsername());
-        user.setPassword(this.encriptPassword(userRequest.getPassword()));
+        user.setPassword(encriptPassword(userRequest.getPassword()));
         user.setRoles(roles);
-        UserSec savedUser = userRepository.save(user);
 
+        UserSec savedUser = userRepository.save(user);
         return userMapper.toUserDTO(savedUser);
     }
 
@@ -63,7 +77,7 @@ public class UserService implements IUserService {
             user.setUsername(userRequest.getUsername());
         }
         if(userRequest.getPassword() != null){
-            user.setPassword(this.encriptPassword(userRequest.getPassword()));
+            user.setPassword(encriptPassword(userRequest.getPassword()));
         }
         if(userRequest.getRoles() != null){
             user.setRoles(resolveRoles(userRequest.getRoles()));
@@ -114,5 +128,14 @@ public class UserService implements IUserService {
             roles.add(readRole);
         }
         return roles;
+    }
+
+    private void validateUser(UserRequest userRequest){
+        if(userRepository.existsByEmail(userRequest.getEmail())) {
+            throw new DuplicateResourceException("Email already exists");
+        }
+        if(userRepository.existsByUsername(userRequest.getUsername())) {
+            throw new DuplicateResourceException("Username already exists");
+        }
     }
 }

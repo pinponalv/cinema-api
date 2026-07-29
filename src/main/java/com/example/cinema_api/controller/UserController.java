@@ -3,6 +3,9 @@ package com.example.cinema_api.controller;
 import com.example.cinema_api.dto.UserRequest;
 import com.example.cinema_api.dto.UserResponse;
 import com.example.cinema_api.service.IUserService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,6 +23,11 @@ import java.util.List;
 public class UserController {
     private final IUserService userService;
 
+    @Operation(summary = "Register user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok request"),
+            @ApiResponse(responseCode = "400", description = "Bad request")
+    })
     @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping
     public ResponseEntity<UserResponse> createUser(@Valid @RequestBody UserRequest userRequest){
@@ -27,6 +35,12 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseUserDTO);
     }
 
+    @Operation(summary = "Update user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok request"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "404", description = "Not found")
+    })
     @PreAuthorize("hasAnyRole('ADMIN')")
     @PatchMapping("/user/{id}")
     public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @Valid @RequestBody UserRequest userRequest){
@@ -34,6 +48,12 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(responseUserDTO);
     }
 
+    @Operation(summary = "Find all user")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok request"),
+            @ApiResponse(responseCode = "204", description = "Not content"),
+            @ApiResponse(responseCode = "500", description = "Internal server error")
+    })
     @PreAuthorize("hasAnyRole('ADMIN','MOD')")
     @GetMapping
     public ResponseEntity<List<UserResponse>> findAllUsers(){
@@ -41,6 +61,13 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(userList);
     }
 
+
+    @Operation(summary = "Find user by id")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok request"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "404", description = "Not found")
+    })
     @PreAuthorize("hasAnyRole('ADMIN','MOD')")
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> findUserById(@PathVariable Long id){
@@ -48,6 +75,11 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(responseUserDTO);
     }
 
+    @Operation(summary = "Delete a role")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "204", description = "Not content"),
+            @ApiResponse(responseCode = "404", description = "Not found")
+    })
     @PreAuthorize("hasAnyRole('ADMIN','MOD')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUserById(@PathVariable Long id){

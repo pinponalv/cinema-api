@@ -4,10 +4,7 @@ import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.Size;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
 import java.util.Set;
 
@@ -29,6 +26,5 @@ public class UserRequest {
     @NotBlank(message = "La password no debe ir vacia")
     @Size(min = 8, message = "la password debe ser mayor a 8 digitos")
     private String password;
-
     private Set<RoleIdRequest> roles;
 }

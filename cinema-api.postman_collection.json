@@ -1,9 +1,10 @@
 {
   "info": {
-    "_postman_id": "d36fa450-76eb-4113-b9a4-e541c74e0478",
+    "_postman_id": "459b4fd5-f67b-4f3f-8d87-f483da1002f7",
     "name": "cinema-api",
     "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
-    "_exporter_id": "23949432"
+    "_exporter_id": "53392645",
+    "_collection_link": "https://go.postman.co/collection/53392645-459b4fd5-f67b-4f3f-8d87-f483da1002f7?source=collection_link"
   },
   "item": [
     {
@@ -16,7 +17,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"permission\": \"ALGO\"\r\n}",
+              "raw": "{\r\n    \"permission\": \"UPDATE\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -128,7 +129,7 @@
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n    \"role\": \"USER\",\r\n    \"permissions\": [\r\n        {\"id\": 1}\r\n    ]\r\n}",
+              "raw": "{\r\n    \"role\": \"CONTENT MANAGER\",\r\n    \"permissions\": [\r\n        {\"id\": 1},\r\n        {\"id\": 2},\r\n        {\"id\": 3},\r\n        {\"id\": 4}\r\n    ]\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -358,11 +359,21 @@
         {
           "name": "CREATE",
           "request": {
+            "auth": {
+              "type": "bearer",
+              "bearer": [
+                {
+                  "key": "token",
+                  "value": "",
+                  "type": "string"
+                }
+              ]
+            },
             "method": "POST",
             "header": [],
             "body": {
               "mode": "raw",
-              "raw": "{\r\n  \"title\": \"CHolaaaaa\",\r\n  \"description\": \"Un experto en tecnología intenta descifrar un código secreto que podría cambiar el destino de varios países.\"\r\n}",
+              "raw": "{\r\n  \"title\": \"Los Vengadores: Renacimiento\",\r\n  \"description\": \"Una nueva generación de héroes debe reunirse para proteger la Tierra después de que una antigua amenaza regresa con un poder capaz de superar a los Vengadores originales.\"\r\n}",
               "options": {
                 "raw": {
                   "language": "json"
@@ -422,7 +433,7 @@
               "raw": "{\r\n  \"title\": \"Código Enigma\",\r\n  \"description\": \"Un experto en tecnología intenta descifrar un código secreto que podría cambiar el destino de varios países.\"\r\n}"
             },
             "url": {
-              "raw": "localhost:8080/api/movie/title/codigo enigma",
+              "raw": "localhost:8080/api/movie/title/codigo del amanecer",
               "host": [
                 "localhost"
               ],
@@ -431,14 +442,14 @@
                 "api",
                 "movie",
                 "title",
-                "codigo enigma"
+                "codigo del amanecer"
               ]
             }
           },
           "response": []
         },
         {
-          "name": "New Request",
+          "name": "UPDATE",
           "request": {
             "method": "PATCH",
             "header": [],
@@ -495,6 +506,38 @@
                 "api",
                 "auth",
                 "login"
+              ]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "New Request",
+          "request": {
+            "auth": {
+              "type": "noauth"
+            },
+            "method": "POST",
+            "header": [],
+            "body": {
+              "mode": "raw",
+              "raw": "{\r\n    \"email\": \"panchito@gmail.com\",\r\n    \"username\": \"panchito\",\r\n    \"password\": \"cmpunk2014\"\r\n}",
+              "options": {
+                "raw": {
+                  "language": "json"
+                }
+              }
+            },
+            "url": {
+              "raw": "localhost:8080/api/auth/register",
+              "host": [
+                "localhost"
+              ],
+              "port": "8080",
+              "path": [
+                "api",
+                "auth",
+                "register"
               ]
             }
           },
