@@ -31,14 +31,19 @@ public class AuthController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok request"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
-            @ApiResponse(responseCode = "401", description = "Unauthiorized"),
-            @ApiResponse(responseCode = "403", description = "Forbiddden")
+            @ApiResponse(responseCode = "401", description = "Unauthiorized")
     })
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthLoginRequest authLoginRequest) {
         return new ResponseEntity<>(userDetailsService.loginUser(authLoginRequest), HttpStatus.OK);
     }
 
+    @Operation(summary = "Register request")
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "201", description = "CREATED"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "409", description = "Resource already exists")
+    })
     @PostMapping("/register")
     public ResponseEntity<UserResponse> register(@Valid @RequestBody UserRequest userRequest){
         UserResponse registerResponse = userService.registerUser(userRequest);

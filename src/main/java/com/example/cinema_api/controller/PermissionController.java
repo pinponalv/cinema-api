@@ -26,8 +26,9 @@ public class PermissionController {
 
     @Operation(summary = "Register permission")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ok request"),
-            @ApiResponse(responseCode = "400", description = "Bad request")
+            @ApiResponse(responseCode = "201", description = "CREATED"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "403", description = "Forbidden")
     })
     @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping
@@ -40,7 +41,8 @@ public class PermissionController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok request"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
-            @ApiResponse(responseCode = "404", description = "Not found")
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "403", description = "Forbidden")
     })
     @PreAuthorize("hasAnyRole('ADMIN')")
     @PutMapping("/{id}")
@@ -52,8 +54,8 @@ public class PermissionController {
     @Operation(summary = "Find all permission")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok request"),
-            @ApiResponse(responseCode = "204", description = "Not content"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")
+            @ApiResponse(responseCode = "500", description = "Internal server error"),
+            @ApiResponse(responseCode = "403", description = "Forbidden")
     })
     @PreAuthorize("hasAnyRole('ADMIN','MOD')")
     @GetMapping
@@ -64,7 +66,8 @@ public class PermissionController {
     @Operation(summary = "Delete a movie")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Not content"),
-            @ApiResponse(responseCode = "404", description = "Not found")
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "403", description = "Forbidden")
     })
     @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/{id}")

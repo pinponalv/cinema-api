@@ -26,8 +26,9 @@ public class RoleController {
 
     @Operation(summary = "Register role")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ok request"),
-            @ApiResponse(responseCode = "400", description = "Bad request")
+            @ApiResponse(responseCode = "201", description = "CREATED"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "403", description = "Forbidden")
     })
     @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping
@@ -41,7 +42,8 @@ public class RoleController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok request"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
-            @ApiResponse(responseCode = "404", description = "Not found")
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "403", description = "Forbidden")
     })
     @PreAuthorize("hasAnyRole('ADMIN')")
     @PatchMapping("/{id}")
@@ -53,7 +55,7 @@ public class RoleController {
     @Operation(summary = "Find all roles")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok request"),
-            @ApiResponse(responseCode = "204", description = "Not content"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
    @PreAuthorize("hasAnyRole('ADMIN','MOD')")
@@ -66,8 +68,8 @@ public class RoleController {
     @Operation(summary = "Find role by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok request"),
-            @ApiResponse(responseCode = "400", description = "Bad request"),
-            @ApiResponse(responseCode = "404", description = "Not found")
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "403", description = "Forbidden")
     })
     @PreAuthorize("hasAnyRole('ADMIN','MOD')")
     @GetMapping("/role/{id}")
@@ -79,7 +81,8 @@ public class RoleController {
     @Operation(summary = "Delete a role")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Not content"),
-            @ApiResponse(responseCode = "404", description = "Not found")
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "403", description = "Forbidden")
     })
     @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/{id}")

@@ -9,6 +9,9 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
@@ -25,8 +28,10 @@ public class UserController {
 
     @Operation(summary = "Register user")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ok request"),
-            @ApiResponse(responseCode = "400", description = "Bad request")
+            @ApiResponse(responseCode = "201", description = "CREATED"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "409", description = "Resource already exists"),
+            @ApiResponse(responseCode = "403", description = "Forbidden")
     })
     @PreAuthorize("hasAnyRole('ADMIN')")
     @PostMapping
@@ -39,7 +44,9 @@ public class UserController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok request"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
-            @ApiResponse(responseCode = "404", description = "Not found")
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "409", description = "Resource already exists"),
+            @ApiResponse(responseCode = "403", description = "Forbidden")
     })
     @PreAuthorize("hasAnyRole('ADMIN')")
     @PatchMapping("/user/{id}")
@@ -51,13 +58,14 @@ public class UserController {
     @Operation(summary = "Find all user")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok request"),
-            @ApiResponse(responseCode = "204", description = "Not content"),
-            @ApiResponse(responseCode = "500", description = "Internal server error")
+            @ApiResponse(responseCode = "500", description = "Internal server error"),
+            @ApiResponse(responseCode = "403", description = "Forbidden")
     })
     @PreAuthorize("hasAnyRole('ADMIN','MOD')")
     @GetMapping
-    public ResponseEntity<List<UserResponse>> findAllUsers(){
-        List<UserResponse> userList = userService.getAllUsers();
+    public ResponseEntity<Page<UserResponse>> findAllUsers(
+            @PageableDefault(size = 5, page = 0) Pageable pageable){
+        Page<UserResponse> userList = userService.getAllUsers(pageable);
         return ResponseEntity.status(HttpStatus.OK).body(userList);
     }
 
@@ -65,7 +73,7 @@ public class UserController {
     @Operation(summary = "Find user by id")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok request"),
-            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "404", description = "Not found")
     })
     @PreAuthorize("hasAnyRole('ADMIN','MOD')")
@@ -78,7 +86,8 @@ public class UserController {
     @Operation(summary = "Delete a role")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Not content"),
-            @ApiResponse(responseCode = "404", description = "Not found")
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "403", description = "Forbidden")
     })
     @PreAuthorize("hasAnyRole('ADMIN','MOD')")
     @DeleteMapping("/{id}")

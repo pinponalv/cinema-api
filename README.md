@@ -629,16 +629,9 @@ mvn test jacoco:report
 - [ ] Script de inicialización de BD
 - [ ] Guía de deployment con Docker
 
-### 3. Paginación en Listados (Media Prioridad)
-
-- [ ] `GET /api/movies` sin paginación — devuelve toda la tabla en un solo response
-- [ ] `GET /api/users` sin paginación — mismo problema
-
-### 4. Documentación (Baja Prioridad - En Progreso)
+### 3. Documentación (Baja Prioridad - En Progreso)
 
 - [x] Mejorar README.md
-- [ ] Guía de contribución (CONTRIBUTING.md)
-- [ ] Documentación de arquitectura
 - [ ] Troubleshooting y FAQ
 
 ---

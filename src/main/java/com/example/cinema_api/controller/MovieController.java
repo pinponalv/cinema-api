@@ -28,8 +28,9 @@ public class MovieController {
 
     @Operation(summary = "Register movie")
     @ApiResponses(value = {
-            @ApiResponse(responseCode = "200", description = "Ok request"),
-            @ApiResponse(responseCode = "400", description = "Bad request")
+            @ApiResponse(responseCode = "201", description = "CREATED"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "403", description = "Forbidden")
     })
     @PreAuthorize("hasAnyRole('ADMIN','MOD')")
     @PostMapping
@@ -42,7 +43,8 @@ public class MovieController {
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok request"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
-            @ApiResponse(responseCode = "404", description = "Not found")
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "403", description = "Forbidden")
     })
     @PreAuthorize("hasAnyRole('ADMIN','MOD')")
     @PatchMapping("/{id}")
@@ -67,7 +69,6 @@ public class MovieController {
     @Operation(summary = "Find all movies")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok request"),
-            @ApiResponse(responseCode = "204", description = "Not content"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
     //GET /api/movie?page=0&size=10&sort=title,asc
@@ -81,7 +82,8 @@ public class MovieController {
     @Operation(summary = "Delete a movie")
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Not content"),
-            @ApiResponse(responseCode = "404", description = "Not found")
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "403", description = "Forbidden")
     })
     @PreAuthorize("hasAnyRole('ADMIN','MOD')")
     @DeleteMapping("/{id}")

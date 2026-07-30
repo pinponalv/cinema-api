@@ -11,6 +11,9 @@ import com.example.cinema_api.repository.RolesRepository;
 import com.example.cinema_api.repository.UserRepository;
 import com.example.cinema_api.service.IUserService;
 import lombok.RequiredArgsConstructor;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
+import org.springframework.data.domain.Pageable;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -88,15 +91,15 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public List<UserResponse> getAllUsers() {
-        List<UserSec> users = userRepository.findAll();
+    public Page<UserResponse> getAllUsers(Pageable pageable) {
+        Page<UserSec> users = userRepository.findAll(pageable);
         List<UserResponse> userResponses = new ArrayList<>();
 
-        for(UserSec user : users){
+        for(UserSec user : users.getContent()){
             UserResponse userResponse = userMapper.toUserDTO(user);
             userResponses.add(userResponse);
         }
-        return userResponses;
+        return new PageImpl<>(userResponses, pageable, users.getTotalElements());
     }
 
     @Override

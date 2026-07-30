@@ -63,6 +63,10 @@ public class GlobalExceptionHandler {
     // (sin streams) para que sea facil de leer paso a paso.
     @ExceptionHandler(MethodArgumentNotValidException.class)
     public ResponseEntity<ApiError> handleValidation(MethodArgumentNotValidException ex) {
+
+        //field error representa un error de validación asociado a un campo específico de un objeto.
+        //con binding result podemos obtener los errores que spring encontro al recibir los datos en el json
+        //basicamente toma los datos recibidos y los vincula con un objeto en java
         List<FieldError> fieldErrors = ex.getBindingResult().getFieldErrors();
 
         List<String> details = new ArrayList<>();
@@ -92,7 +96,7 @@ public class GlobalExceptionHandler {
     // Se lanza cuando un usuario SI esta autenticado (tiene un token valido) pero
     // intenta acceder a un endpoint para el que no tiene el rol necesario
     // (por ejemplo, un USER llamando un endpoint que exige ADMIN).
-    // Respondemos con 403 Forbidden.
+    // Respondemos con 403 Forbidden, significa prohibido
     @ExceptionHandler(AccessDeniedException.class)
     public ResponseEntity<ApiError> handleAccessDenied(AccessDeniedException ex) {
         return build(HttpStatus.FORBIDDEN, "No tenes permisos para realizar esta accion");
