@@ -61,7 +61,7 @@ public class PermissionService implements IPermissionService {
     @Override
     public void deletePermission(Long id) {
         if(!permissionRepository.existsById(id)){
-            throw new ResourceNotFoundException("Permiso no encontrado");
+            throw new ResourceNotFoundException("Permission not found");
         }
         permissionRepository.deleteById(id);
     }
