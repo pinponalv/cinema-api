@@ -21,24 +21,30 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/auth")
-@Tag(name = "")
+@Tag(name = "Auth", description = "Authentication API Operations")
 @RequiredArgsConstructor
 public class AuthController {
     private final CustomUserDetailsService userDetailsService;
     private final IUserService userService;
 
-    @Operation(summary = "Login request")
+    @Operation(
+            summary = "Login request",
+            description = "Autentica un usuario con username/email y password, y retorna un token JWT. Endpoint público."
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok request"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
-            @ApiResponse(responseCode = "401", description = "Unauthiorized")
+            @ApiResponse(responseCode = "401", description = "Unauthorized")
     })
     @PostMapping("/login")
     public ResponseEntity<AuthResponse> login(@Valid @RequestBody AuthLoginRequest authLoginRequest) {
         return new ResponseEntity<>(userDetailsService.loginUser(authLoginRequest), HttpStatus.OK);
     }
 
-    @Operation(summary = "Register request")
+    @Operation(
+            summary = "Register request",
+            description = "Registra un nuevo usuario público con el rol USER por defecto. Endpoint público, no requiere autenticación."
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "CREATED"),
             @ApiResponse(responseCode = "400", description = "Bad request"),

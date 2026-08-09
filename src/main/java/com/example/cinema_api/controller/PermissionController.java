@@ -6,6 +6,7 @@ import com.example.cinema_api.service.IPermissionService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -19,12 +20,16 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/permissions")
 @Tag(name = "Permissions", description = "Permissions API Operations")
+@SecurityRequirement(name = "bearerAuth")
 @RequiredArgsConstructor
 public class PermissionController {
 
     private final IPermissionService permissionService;
 
-    @Operation(summary = "Register permission")
+    @Operation(
+            summary = "Register permission",
+            description = "Crea un nuevo permiso. Requiere rol ADMIN."
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "CREATED"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
@@ -37,7 +42,10 @@ public class PermissionController {
         return ResponseEntity.status(HttpStatus.CREATED).body(response);
     }
 
-    @Operation(summary = "Update permission")
+    @Operation(
+            summary = "Update permission",
+            description = "Actualiza el nombre de un permiso existente por id. Requiere rol ADMIN."
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok request"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
@@ -51,7 +59,10 @@ public class PermissionController {
         return ResponseEntity.status(HttpStatus.OK).body(response);
     }
 
-    @Operation(summary = "Find all permission")
+    @Operation(
+            summary = "Find all permission",
+            description = "Retorna la lista completa de permisos, sin paginación. Requiere rol ADMIN o MOD."
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok request"),
             @ApiResponse(responseCode = "500", description = "Internal server error"),
@@ -63,7 +74,10 @@ public class PermissionController {
         return ResponseEntity.status(HttpStatus.OK).body(permissionService.findAllPermissions());
     }
 
-    @Operation(summary = "Delete a movie")
+    @Operation(
+            summary = "Delete a permission",
+            description = "Elimina un permiso por id. Requiere rol ADMIN."
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Not content"),
             @ApiResponse(responseCode = "404", description = "Not found"),

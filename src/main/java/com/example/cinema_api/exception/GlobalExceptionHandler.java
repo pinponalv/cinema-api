@@ -18,7 +18,8 @@ import java.util.List;
 // @RestControllerAdvice hace que esta clase intercepte las excepciones lanzadas
 // por CUALQUIER controller de la app. Sin esta clase, cada excepcion sin manejar
 // termina en un error 500 generico de Spring, sin un formato claro para el cliente.
-@RestControllerAdvice
+
+@RestControllerAdvice //esta anotacion hace que spring la registre automaticamente internamente
 public class GlobalExceptionHandler {
 
     // El logger sirve para dejar registro en la consola/archivo de log de los errores

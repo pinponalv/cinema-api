@@ -24,15 +24,15 @@ Cinema API expone operaciones CRUD sobre películas, usuarios, roles y permisos,
 
 - ✅ **Autenticación JWT** - Secure token-based authentication
 - ✅ **Control de Acceso basado en Roles (RBAC)** - Usuarios, roles y permisos
-- ✅ **Gestión de Películas** - CRUD completo
+- ✅ **Gestión de Películas** - CRUD completo, con búsqueda por título y por género
 - ✅ **Spring Security** - Configuración de seguridad avanzada
 - ✅ **OpenAPI/Swagger** - Documentación interactiva de API
 - ✅ **MySQL Database** - Persistencia relacional
 - ✅ **MapStruct** - Mapeo limpio entre DTOs y entidades
 - ✅ **Manejo global de errores** - `GlobalExceptionHandler` con respuestas consistentes
 - ✅ **Paginación** - En listados de películas y usuarios
+- ✅ **Unit Tests** - Cobertura de pruebas para servicios (Movie, Permission, Role, User)
 - ⏳ **Docker Support** - Containerización (pendiente)
-- ⏳ **Unit Tests** - Cobertura de pruebas (pendiente)
 
 ---
 
@@ -171,7 +171,7 @@ A partir de ahí, todos los endpoints que pruebes desde la UI van a incluir el t
 
 ### 1. Testing (Media Prioridad)
 
-- [ ] Pruebas unitarias para servicios
+- [x] Pruebas unitarias para servicios
 - [ ] Pruebas de integración para endpoints
 - [ ] Pruebas de seguridad (autenticación, autorización)
 - [ ] Cobertura mínima: 80%

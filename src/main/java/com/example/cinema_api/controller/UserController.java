@@ -6,6 +6,7 @@ import com.example.cinema_api.service.IUserService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -22,11 +23,15 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/users")
 @Tag(name = "Users", description = "Users API Operations")
+@SecurityRequirement(name = "bearerAuth")
 @RequiredArgsConstructor
 public class UserController {
     private final IUserService userService;
 
-    @Operation(summary = "Register user")
+    @Operation(
+            summary = "Register user",
+            description = "Crea un nuevo usuario indicando explícitamente sus roles. Requiere rol ADMIN. Para auto-registro público, usar /api/auth/register."
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "CREATED"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
@@ -40,7 +45,10 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.CREATED).body(responseUserDTO);
     }
 
-    @Operation(summary = "Update user")
+    @Operation(
+            summary = "Update user",
+            description = "Actualiza un usuario existente por id. Solo se modifican los campos enviados (email, username, password y/o roles). Requiere rol ADMIN."
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok request"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
@@ -55,7 +63,10 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(responseUserDTO);
     }
 
-    @Operation(summary = "Find all user")
+    @Operation(
+            summary = "Find all user",
+            description = "Retorna una página de usuarios. Parámetros: page (default: 0), size (default: 5), sort (opcional, ejemplo: 'username,asc'). Requiere rol ADMIN o MOD."
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok request"),
             @ApiResponse(responseCode = "500", description = "Internal server error"),
@@ -70,7 +81,10 @@ public class UserController {
     }
 
 
-    @Operation(summary = "Find user by id")
+    @Operation(
+            summary = "Find user by id",
+            description = "Busca un usuario por su id, incluyendo sus roles asociados. Requiere rol ADMIN o MOD."
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok request"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
@@ -83,7 +97,10 @@ public class UserController {
         return ResponseEntity.status(HttpStatus.OK).body(responseUserDTO);
     }
 
-    @Operation(summary = "Delete a role")
+    @Operation(
+            summary = "Delete a user",
+            description = "Elimina un usuario por id. Requiere rol ADMIN o MOD."
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Not content"),
             @ApiResponse(responseCode = "404", description = "Not found"),

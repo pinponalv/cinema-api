@@ -20,4 +20,8 @@ public class Movies {
     private String title;
     @Column(nullable = false)
     private String description;
+    @Column(nullable = false)
+    private String filmGenre;
+    /**Esta la opcion de usar el genero de pelicula como una entidad aparte
+     * pero para practicidad lo manejare como un string dentro de esta misma entidad**/
 }

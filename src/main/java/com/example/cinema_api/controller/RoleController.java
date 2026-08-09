@@ -7,6 +7,7 @@ import com.example.cinema_api.service.IRoleService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
+import io.swagger.v3.oas.annotations.security.SecurityRequirement;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
@@ -20,11 +21,15 @@ import java.util.List;
 @RestController
 @RequestMapping("/api/roles")
 @Tag(name = "Roles", description = "Roles API Operations")
+@SecurityRequirement(name = "bearerAuth")
 @RequiredArgsConstructor
 public class RoleController {
     private final IRoleService roleService;
 
-    @Operation(summary = "Register role")
+    @Operation(
+            summary = "Register role",
+            description = "Crea un nuevo rol asociado a un conjunto de permisos existentes. Requiere rol ADMIN."
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "201", description = "CREATED"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
@@ -38,7 +43,10 @@ public class RoleController {
     }
 
 
-    @Operation(summary = "Update role")
+    @Operation(
+            summary = "Update role",
+            description = "Actualiza un rol existente por id. Solo se modifican los campos enviados (role y/o permissions). Requiere rol ADMIN."
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok request"),
             @ApiResponse(responseCode = "400", description = "Bad request"),
@@ -52,7 +60,10 @@ public class RoleController {
         return ResponseEntity.status(HttpStatus.OK).body(responseRoleDTO);
     }
 
-    @Operation(summary = "Find all roles")
+    @Operation(
+            summary = "Find all roles",
+            description = "Retorna la lista completa de roles con sus permisos asociados, sin paginación. Requiere rol ADMIN o MOD."
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok request"),
             @ApiResponse(responseCode = "403", description = "Forbidden"),
@@ -65,7 +76,10 @@ public class RoleController {
         return ResponseEntity.status(HttpStatus.OK).body(responseRoleDTO);
     }
 
-    @Operation(summary = "Find role by id")
+    @Operation(
+            summary = "Find role by id",
+            description = "Busca un rol por su id, incluyendo sus permisos asociados. Requiere rol ADMIN o MOD."
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "200", description = "Ok request"),
             @ApiResponse(responseCode = "404", description = "Not found"),
@@ -78,7 +92,10 @@ public class RoleController {
         return ResponseEntity.status(HttpStatus.OK).body(responseRoleDTO);
     }
 
-    @Operation(summary = "Delete a role")
+    @Operation(
+            summary = "Delete a role",
+            description = "Elimina un rol por id. Requiere rol ADMIN."
+    )
     @ApiResponses(value = {
             @ApiResponse(responseCode = "204", description = "Not content"),
             @ApiResponse(responseCode = "404", description = "Not found"),

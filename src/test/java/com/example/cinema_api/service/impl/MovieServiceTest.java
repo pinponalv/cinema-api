@@ -3,6 +3,7 @@ package com.example.cinema_api.service.impl;
 import com.example.cinema_api.dto.MovieRequest;
 import com.example.cinema_api.dto.MovieResponse;
 import com.example.cinema_api.entity.Movies;
+import com.example.cinema_api.exception.ResourceNotFoundException;
 import com.example.cinema_api.repository.MoviesRepository;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -14,6 +15,7 @@ import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -47,8 +49,8 @@ class MovieServiceTest {
      * codigo repetitivo**/
     @BeforeEach
     void setUp() {
-        movie = new Movies(1L, "Inception", "A mind-bending thriller");
-        movieRequest = new MovieRequest("Inception", "A mind-bending thriller");
+        movie = new Movies(1L, "Inception", "A mind-bending thriller","accion");
+        movieRequest = new MovieRequest("Inception", "A mind-bending thriller", "accion");
     }
 
     @Test
@@ -71,7 +73,7 @@ class MovieServiceTest {
     //actualizamos solo el campo que le porporcionamos
     @Test
     void updateMovie() {
-        MovieRequest updateRequest = new MovieRequest("Inception 2", null);
+        MovieRequest updateRequest = new MovieRequest("Inception 2", null, null);
         when(moviesRepository.findById(1L)).thenReturn(Optional.of(movie));
         //cuando guarde alguna clase de movie me va retornar la pelicula
         when(moviesRepository.save(any(Movies.class))).thenReturn(movie);
@@ -109,6 +111,28 @@ class MovieServiceTest {
 
         assertThat(response.getTitle()).isEqualTo("Inception");
         verify(moviesRepository).findMovieByTitle("Inception");
+    }
+
+    @Test
+    void findByFilmGenre() {
+        List<Movies>  moviesList = new ArrayList<>(List.of(movie));
+        when(moviesRepository.findByFilmGenre("accion")).thenReturn(moviesList);
+
+        List<MovieResponse> movieResponseList = movieService.findByFilmGenre("accion");
+
+        assertThat(movieResponseList).isNotNull();
+        assertThat(movieResponseList.get(0).getFilmGenre()).isEqualTo("accion");
+        verify(moviesRepository).findByFilmGenre("accion");
+
+    }
+
+    @Test
+    void findByFilmGenre_throwExceptionWhenGenreNotFound() {
+        when(moviesRepository.findByFilmGenre("aventura")).thenReturn(new ArrayList<>());
+
+        assertThatThrownBy(() -> movieService.findByFilmGenre("aventura"))
+                .isInstanceOf(ResourceNotFoundException.class)
+                .hasMessage("No movies found for genre aventura");
     }
 
 
