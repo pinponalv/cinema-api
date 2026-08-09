@@ -134,9 +134,6 @@ mvn clean install
 # Ejecutar la aplicación
 mvn spring-boot:run
 ```
-
-La API estará disponible en: `http://localhost:8080`
-
 ---
 
 ## 📖 Probar la API con Swagger
@@ -146,11 +143,6 @@ Con la aplicación corriendo, accedé a la documentación interactiva en:
 ```
 http://localhost:8080/swagger-ui.html
 ```
-
-Desde ahí podés:
-- Ver todos los endpoints agrupados por controller (Auth, Users, Movies, Roles, Permissions).
-- Ver el schema de cada `Request`/`Response`.
-- Ejecutar cada endpoint directamente desde el navegador, sin necesidad de Postman ni `curl`.
 
 ### Autenticarte dentro de Swagger
 
@@ -183,11 +175,6 @@ A partir de ahí, todos los endpoints que pruebes desde la UI van a incluir el t
 - [ ] Script de inicialización de BD
 - [ ] Guía de deployment con Docker
 
-### 3. Documentación (Baja Prioridad - En Progreso)
-
-- [x] Mejorar README.md
-- [ ] Troubleshooting y FAQ
-
 ---
 
 ## 📚 Referencias
@@ -203,7 +190,3 @@ A partir de ahí, todos los endpoints que pruebes desde la UI van a incluir el t
 ## 📄 Licencia
 
 Este proyecto es de código abierto y está disponible bajo la licencia MIT.
-
----
-
-**Última actualización:** 2026-07-29 | **Versión:** 0.0.1-SNAPSHOT
