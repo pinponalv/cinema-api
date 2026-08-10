@@ -186,8 +186,6 @@ La mayoría de los endpoints requieren un token JWT. Para probarlos:
 
 A partir de ahí, todos los endpoints que pruebes desde la UI van a incluir el token automáticamente en el header `Authorization`.
 
-> Si no tenés ningún usuario todavía, primero registrá uno con **`POST /api/auth/register`** y después hacé login con esas credenciales.
-
 ---
 
 ## 📋 Tareas Pendientes
