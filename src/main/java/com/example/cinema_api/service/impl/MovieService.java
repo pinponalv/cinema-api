@@ -12,6 +12,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,26 @@ import java.util.List;
 public class MovieService implements IMoviesService {
 
     private final MoviesRepository moviesRepository;
+    private final CloudinaryService cloudinaryService;
+
+    @Override
+    public MovieResponse uploadPoster(Long id, MultipartFile file) {
+        Movies movies = moviesRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Movie not found"));
+
+        String posterUrl = cloudinaryService.uploadImage(file);
+
+        movies.setPosterUrl(posterUrl);
+        Movies updated =  moviesRepository.save(movies);
+
+        return new MovieResponse(
+                updated.getId(),
+                updated.getTitle(),
+                updated.getDescription(),
+                updated.getFilmGenre(),
+                updated.getPosterUrl()
+        );
+    }
 
     @Override
     public MovieResponse createMovie(MovieRequest create) {
@@ -34,7 +55,8 @@ public class MovieService implements IMoviesService {
                 saveMovie.getId(),
                 saveMovie.getTitle(),
                 saveMovie.getDescription(),
-                saveMovie.getFilmGenre()
+                saveMovie.getFilmGenre(),
+                saveMovie.getPosterUrl()
         );
     }
 
@@ -57,7 +79,8 @@ public class MovieService implements IMoviesService {
                 saveMovie.getId(),
                 saveMovie.getTitle(),
                 saveMovie.getDescription(),
-                saveMovie.getFilmGenre()
+                saveMovie.getFilmGenre(),
+                saveMovie.getPosterUrl()
         );
     }
 
@@ -73,7 +96,8 @@ public class MovieService implements IMoviesService {
                 getMovieByTitle.getId(),
                 getMovieByTitle.getTitle(),
                 getMovieByTitle.getDescription(),
-                getMovieByTitle.getFilmGenre()
+                getMovieByTitle.getFilmGenre(),
+                getMovieByTitle.getPosterUrl()
         );
     }
 
@@ -95,7 +119,8 @@ public class MovieService implements IMoviesService {
                     movies.getId(),
                     movies.getTitle(),
                     movies.getDescription(),
-                    movies.getFilmGenre()
+                    movies.getFilmGenre(),
+                    movies.getPosterUrl()
             );
             responseList.add(movieResponse);
         }
@@ -115,7 +140,8 @@ public class MovieService implements IMoviesService {
                     movies.getId(),
                     movies.getTitle(),
                     movies.getDescription(),
-                    movies.getFilmGenre()
+                    movies.getFilmGenre(),
+                    movies.getPosterUrl()
             );
             responseMovieDTOList.add(responseMovieDTO);
         }

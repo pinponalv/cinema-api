@@ -4,10 +4,12 @@ import com.example.cinema_api.dto.MovieRequest;
 import com.example.cinema_api.dto.MovieResponse;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
 public interface IMoviesService {
+    MovieResponse uploadPoster(Long id, MultipartFile file);
     MovieResponse createMovie(MovieRequest create);
     MovieResponse updateMovie(Long id, MovieRequest create);
     MovieResponse findMovieByTitle(String title);

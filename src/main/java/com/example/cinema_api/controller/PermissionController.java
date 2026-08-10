@@ -68,7 +68,7 @@ public class PermissionController {
             @ApiResponse(responseCode = "500", description = "Internal server error"),
             @ApiResponse(responseCode = "403", description = "Forbidden")
     })
-    @PreAuthorize("hasAnyRole('ADMIN','MOD')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<PermissionResponse>> findAllPermissions() {
         return ResponseEntity.status(HttpStatus.OK).body(permissionService.findAllPermissions());

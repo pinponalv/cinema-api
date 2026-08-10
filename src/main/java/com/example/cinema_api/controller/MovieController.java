@@ -3,6 +3,7 @@ package com.example.cinema_api.controller;
 import com.example.cinema_api.dto.MovieRequest;
 import com.example.cinema_api.dto.MovieResponse;
 import com.example.cinema_api.service.IMoviesService;
+import com.example.cinema_api.service.impl.CloudinaryService;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.responses.ApiResponses;
@@ -16,9 +17,11 @@ import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.web.PageableDefault;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 
 import java.util.List;
 
@@ -30,6 +33,27 @@ import java.util.List;
 public class MovieController {
     private final IMoviesService moviesService;
 
+
+
+    @Operation(
+            summary = "Upload movie poster",
+            description = "Sube la imagen de portada de una película a Cloudinary y guarda su URL. Requiere rol ADMIN o MOD."
+    )
+    @ApiResponses(value = {
+            @ApiResponse(responseCode = "200", description = "Ok request"),
+            @ApiResponse(responseCode = "400", description = "Bad request"),
+            @ApiResponse(responseCode = "404", description = "Not found"),
+            @ApiResponse(responseCode = "403", description = "Forbidden")
+    })
+    @PreAuthorize("hasAnyRole('ADMIN','CONTENT_MANAGER')")
+    //MEDIATYPE ME AYUDA A QUE SWAGGER ME MUESTRE EL BOTON PARA SUBIR IMAGENES
+    @PostMapping(value = "/{id}/poster", consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<MovieResponse> uploadPoster(@PathVariable Long id,
+                                                      @RequestParam("file") MultipartFile file) {
+        MovieResponse response = moviesService.uploadPoster(id, file);
+        return ResponseEntity.status(HttpStatus.OK).body(response);
+    }
+
     @Operation(
             summary = "Register movie",
             description = "Crea una nueva película. Requiere rol ADMIN o MOD."
@@ -39,7 +63,7 @@ public class MovieController {
             @ApiResponse(responseCode = "400", description = "Bad request"),
             @ApiResponse(responseCode = "403", description = "Forbidden")
     })
-    @PreAuthorize("hasAnyRole('ADMIN','MOD')")
+    @PreAuthorize("hasAnyRole('ADMIN','CONTENT_MANAGER')")
     @PostMapping
     public ResponseEntity<MovieResponse> createMovie(@Valid @RequestBody MovieRequest create){
         MovieResponse responseMovieDTO = moviesService.createMovie(create);
@@ -56,7 +80,7 @@ public class MovieController {
             @ApiResponse(responseCode = "404", description = "Not found"),
             @ApiResponse(responseCode = "403", description = "Forbidden")
     })
-    @PreAuthorize("hasAnyRole('ADMIN','MOD')")
+    @PreAuthorize("hasAnyRole('ADMIN','CONTENT_MANAGER')")
     @PatchMapping("/{id}")
     public ResponseEntity<MovieResponse> updateMovie(@PathVariable Long id, @Valid @RequestBody MovieRequest create){
         MovieResponse responseMovieDTO = moviesService.updateMovie(id, create);
@@ -119,7 +143,7 @@ public class MovieController {
             @ApiResponse(responseCode = "404", description = "Not found"),
             @ApiResponse(responseCode = "403", description = "Forbidden")
     })
-    @PreAuthorize("hasAnyRole('ADMIN','MOD')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteMovie(@PathVariable Long id){
         moviesService.deleteMovie(id);

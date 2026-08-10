@@ -23,4 +23,6 @@ public class MovieRequest {
     @Schema(example = "accion, terror,aventuras, fantasias, ciencia ficcion", description = "categoria de la pelicula")
     @NotBlank(message = "La categoria no puede estar vacia")
     private String filmGenre;
+
+    private String posterUrl;
 }

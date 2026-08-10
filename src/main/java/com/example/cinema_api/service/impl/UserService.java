@@ -47,7 +47,7 @@ public class UserService implements IUserService {
 
         return userMapper.toUserDTO(savedUser);
     }
-
+    
     @Override
     public UserResponse createUser(UserRequest userRequest) {
         validateUser(userRequest);

@@ -25,6 +25,7 @@ Cinema API expone operaciones CRUD sobre películas, usuarios, roles y permisos,
 - ✅ **Autenticación JWT** - Secure token-based authentication
 - ✅ **Control de Acceso basado en Roles (RBAC)** - Usuarios, roles y permisos
 - ✅ **Gestión de Películas** - CRUD completo, con búsqueda por título y por género
+- ✅ **Upload de Imágenes (Cloudinary)** - Subida del poster de cada película
 - ✅ **Spring Security** - Configuración de seguridad avanzada
 - ✅ **OpenAPI/Swagger** - Documentación interactiva de API
 - ✅ **MySQL Database** - Persistencia relacional
@@ -113,7 +114,7 @@ cd cinema-api
 
 ### 2. Configurar la Base de Datos
 ```sql
-CREATE DATABASE `cinema-api` CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci;
+CREATE DATABASE `cinema-api`;
 ```
 
 ### 3. Configurar credenciales
@@ -126,7 +127,37 @@ spring.datasource.username=root
 spring.datasource.password=tu_contraseña
 ```
 
-### 4. Instalar Dependencias y Ejecutar
+Y con tus credenciales de [Cloudinary](https://cloudinary.com/users/register/free) (cuenta gratuita, necesaria para subir posters de películas):
+
+```properties
+cloudinary.cloud.name=tu_cloud_name
+cloudinary.api.key=tu_api_key
+cloudinary.api.secret=tu_api_secret
+```
+
+### 4. Cargar datos iniciales (seeder)
+
+El proyecto incluye un seeder (`data.sql`) que crea roles, permisos, un usuario ADMIN y algunas películas de ejemplo. Para cargarlo la primera vez:
+
+```properties
+spring.sql.init.mode=always
+```
+
+Iniciá la aplicación una vez para que se ejecute el seeder, y luego vuelve a poner:
+
+```properties
+spring.sql.init.mode=never
+```
+
+para que no se vuelva a ejecutar en los próximos inicios (evita errores de datos duplicados).
+
+Con el seeder cargado, podés loguearte directo con el usuario admin por defecto:
+```
+email: admin@cinema.com
+password: admin123
+```
+
+### 5. Instalar Dependencias y Ejecutar
 ```bash
 # Compilar el proyecto
 mvn clean install

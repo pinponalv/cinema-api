@@ -69,7 +69,7 @@ public class RoleController {
             @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "500", description = "Internal server error")
     })
-   @PreAuthorize("hasAnyRole('ADMIN','MOD')")
+   @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping
     public ResponseEntity<List<RoleResponse>> findAllRoles(){
         List<RoleResponse> responseRoleDTO = roleService.findAllRoles();
@@ -85,7 +85,7 @@ public class RoleController {
             @ApiResponse(responseCode = "404", description = "Not found"),
             @ApiResponse(responseCode = "403", description = "Forbidden")
     })
-    @PreAuthorize("hasAnyRole('ADMIN','MOD')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping("/role/{id}")
     public ResponseEntity<RoleResponse> findRoleById(@PathVariable Long id){
         RoleResponse responseRoleDTO = roleService.findRoleById(id);

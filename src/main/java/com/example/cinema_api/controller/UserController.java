@@ -72,7 +72,7 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "Internal server error"),
             @ApiResponse(responseCode = "403", description = "Forbidden")
     })
-    @PreAuthorize("hasAnyRole('ADMIN','MOD')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping
     public ResponseEntity<Page<UserResponse>> findAllUsers(
             @PageableDefault(size = 5, page = 0) Pageable pageable){
@@ -90,7 +90,7 @@ public class UserController {
             @ApiResponse(responseCode = "403", description = "Forbidden"),
             @ApiResponse(responseCode = "404", description = "Not found")
     })
-    @PreAuthorize("hasAnyRole('ADMIN','MOD')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @GetMapping("/{id}")
     public ResponseEntity<UserResponse> findUserById(@PathVariable Long id){
         UserResponse responseUserDTO = userService.getUserById(id);
@@ -106,7 +106,7 @@ public class UserController {
             @ApiResponse(responseCode = "404", description = "Not found"),
             @ApiResponse(responseCode = "403", description = "Forbidden")
     })
-    @PreAuthorize("hasAnyRole('ADMIN','MOD')")
+    @PreAuthorize("hasAnyRole('ADMIN')")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> deleteUserById(@PathVariable Long id){
         userService.deleteUser(id);
