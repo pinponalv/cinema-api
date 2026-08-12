@@ -1,5 +1,6 @@
 package com.example.cinema_api.service.impl;
 
+import com.example.cinema_api.dto.MoviePatchRequest;
 import com.example.cinema_api.dto.MovieRequest;
 import com.example.cinema_api.dto.MovieResponse;
 import com.example.cinema_api.entity.Movies;
@@ -61,7 +62,7 @@ public class MovieService implements IMoviesService {
     }
 
     @Override
-    public MovieResponse updateMovie(Long id, MovieRequest create) {
+    public MovieResponse updateMovie(Long id, MoviePatchRequest create) {
         Movies getMovie = moviesRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Movie not found"));
 
         if(create.getTitle() != null){

@@ -2,6 +2,7 @@ package com.example.cinema_api.service.impl;
 
 import com.example.cinema_api.dto.RoleIdRequest;
 import com.example.cinema_api.dto.RoleResponse;
+import com.example.cinema_api.dto.UserPatchRequest;
 import com.example.cinema_api.dto.UserRequest;
 import com.example.cinema_api.dto.UserResponse;
 import com.example.cinema_api.entity.Roles;
@@ -182,7 +183,7 @@ class UserServiceTest {
 
     @Test
     void updateUser_shouldUpdateOnlyProvidedFields() {
-        UserRequest updateRequest = new UserRequest("nuevo@gmail.com", null, null, null);
+        UserPatchRequest updateRequest = new UserPatchRequest("nuevo@gmail.com", null, null, null);
         when(userRepository.findById(1L)).thenReturn(Optional.of(userSec));
         when(userRepository.save(any(UserSec.class))).thenReturn(userSec);
         when(userMapper.toUserDTO(userSec)).thenReturn(userResponse);
@@ -199,7 +200,8 @@ class UserServiceTest {
     void updateUser_shouldThrowExceptionWhenUserNotFound() {
         when(userRepository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> userService.updateUser(99L, userRequest))
+        UserPatchRequest patchRequest = new UserPatchRequest("juan@gmail.com", "juanito123", "12345678", Set.of(new RoleIdRequest(1L)));
+        assertThatThrownBy(() -> userService.updateUser(99L, patchRequest))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("User not found");
 

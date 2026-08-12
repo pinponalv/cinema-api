@@ -2,6 +2,7 @@ package com.example.cinema_api.service.impl;
 
 import com.example.cinema_api.dto.PermissionIdRequest;
 import com.example.cinema_api.dto.PermissionResponse;
+import com.example.cinema_api.dto.RolePatchRequest;
 import com.example.cinema_api.dto.RoleRequest;
 import com.example.cinema_api.dto.RoleResponse;
 import com.example.cinema_api.entity.Permission;
@@ -37,7 +38,7 @@ public class RoleService implements IRoleService {
     }
 
     @Override
-    public RoleResponse updateRole(Long id, RoleRequest roleRequest) {
+    public RoleResponse updateRole(Long id, RolePatchRequest roleRequest) {
         Roles roles = rolesRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Role not found"));
 
         if(roleRequest.getRole() != null) {

@@ -69,7 +69,7 @@ public class UserService implements IUserService {
     }
 
     @Override
-    public UserResponse updateUser(Long id, UserRequest userRequest) {
+    public UserResponse updateUser(Long id, UserPatchRequest userRequest) {
         UserSec user = userRepository.findById(id)
                 .orElseThrow(() -> new ResourceNotFoundException("User not found"));
 

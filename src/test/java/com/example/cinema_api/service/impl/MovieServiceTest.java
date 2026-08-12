@@ -1,5 +1,6 @@
 package com.example.cinema_api.service.impl;
 
+import com.example.cinema_api.dto.MoviePatchRequest;
 import com.example.cinema_api.dto.MovieRequest;
 import com.example.cinema_api.dto.MovieResponse;
 import com.example.cinema_api.entity.Movies;
@@ -49,8 +50,8 @@ class MovieServiceTest {
      * codigo repetitivo**/
     @BeforeEach
     void setUp() {
-        movie = new Movies(1L, "Inception", "A mind-bending thriller","accion");
-        movieRequest = new MovieRequest("Inception", "A mind-bending thriller", "accion");
+        movie = new Movies(1L, "Inception", "A mind-bending thriller","accion", null);
+        movieRequest = new MovieRequest("Inception", "A mind-bending thriller", "accion", null);
     }
 
     @Test
@@ -73,7 +74,7 @@ class MovieServiceTest {
     //actualizamos solo el campo que le porporcionamos
     @Test
     void updateMovie() {
-        MovieRequest updateRequest = new MovieRequest("Inception 2", null, null);
+        MoviePatchRequest updateRequest = new MoviePatchRequest("Inception 2", null, null, null);
         when(moviesRepository.findById(1L)).thenReturn(Optional.of(movie));
         //cuando guarde alguna clase de movie me va retornar la pelicula
         when(moviesRepository.save(any(Movies.class))).thenReturn(movie);
@@ -94,8 +95,9 @@ class MovieServiceTest {
     void updateMovie_throwExceptionWhenMovieNotFound() {
         when(moviesRepository.findById(99L)).thenReturn(Optional.empty());
 
+        MoviePatchRequest patchRequest = new MoviePatchRequest("Inception", "A mind-bending thriller", "accion", null);
         //afirma que fue lanzado por
-        assertThatThrownBy(() -> movieService.updateMovie(99L, movieRequest))
+        assertThatThrownBy(() -> movieService.updateMovie(99L, patchRequest))
                 .isInstanceOf(RuntimeException.class)
                 .hasMessage("Movie not found");
 

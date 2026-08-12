@@ -1,6 +1,7 @@
 package com.example.cinema_api.service.impl;
 
 import com.example.cinema_api.dto.PermissionIdRequest;
+import com.example.cinema_api.dto.RolePatchRequest;
 import com.example.cinema_api.dto.RoleRequest;
 import com.example.cinema_api.dto.RoleResponse;
 import com.example.cinema_api.entity.Permission;
@@ -65,7 +66,7 @@ public class RoleServiceTest {
 
     @Test
     void updateRole(){
-        RoleRequest updateRequest = new RoleRequest("SUPER_ADMIN", null);
+        RolePatchRequest updateRequest = new RolePatchRequest("SUPER_ADMIN", null);
         when(rolesRepository.findById(1L)).thenReturn(Optional.of(roles));
         when(rolesRepository.save(any(Roles.class))).thenReturn(roles);
 
@@ -83,7 +84,8 @@ public class RoleServiceTest {
     void updateRole_throwExceptionWhenRoleNotFound(){
         when(rolesRepository.findById(99L)).thenReturn(Optional.empty());
 
-        assertThatThrownBy(() -> roleService.updateRole(99L, roleRequest))
+        RolePatchRequest patchRequest = new RolePatchRequest("ADMIN", Set.of(new PermissionIdRequest(1L)));
+        assertThatThrownBy(() -> roleService.updateRole(99L, patchRequest))
                 .isInstanceOf(ResourceNotFoundException.class)
                 .hasMessage("Role not found");
 

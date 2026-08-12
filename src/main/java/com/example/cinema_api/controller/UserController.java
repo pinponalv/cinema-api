@@ -1,5 +1,6 @@
 package com.example.cinema_api.controller;
 
+import com.example.cinema_api.dto.UserPatchRequest;
 import com.example.cinema_api.dto.UserRequest;
 import com.example.cinema_api.dto.UserResponse;
 import com.example.cinema_api.service.IUserService;
@@ -58,7 +59,7 @@ public class UserController {
     })
     @PreAuthorize("hasAnyRole('ADMIN')")
     @PatchMapping("/user/{id}")
-    public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @Valid @RequestBody UserRequest userRequest){
+    public ResponseEntity<UserResponse> updateUser(@PathVariable Long id, @Valid @RequestBody UserPatchRequest userRequest){
         UserResponse responseUserDTO = userService.updateUser(id, userRequest);
         return ResponseEntity.status(HttpStatus.OK).body(responseUserDTO);
     }

@@ -1,6 +1,7 @@
 package com.example.cinema_api.controller;
 
 
+import com.example.cinema_api.dto.RolePatchRequest;
 import com.example.cinema_api.dto.RoleRequest;
 import com.example.cinema_api.dto.RoleResponse;
 import com.example.cinema_api.service.IRoleService;
@@ -55,7 +56,7 @@ public class RoleController {
     })
     @PreAuthorize("hasAnyRole('ADMIN')")
     @PatchMapping("/{id}")
-    public ResponseEntity<RoleResponse> updateRole(@PathVariable Long id, @Valid @RequestBody RoleRequest roleRequest){
+    public ResponseEntity<RoleResponse> updateRole(@PathVariable Long id, @Valid @RequestBody RolePatchRequest roleRequest){
         RoleResponse responseRoleDTO = roleService.updateRole(id, roleRequest);
         return ResponseEntity.status(HttpStatus.OK).body(responseRoleDTO);
     }

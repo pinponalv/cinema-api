@@ -1,5 +1,6 @@
 package com.example.cinema_api.controller;
 
+import com.example.cinema_api.dto.MoviePatchRequest;
 import com.example.cinema_api.dto.MovieRequest;
 import com.example.cinema_api.dto.MovieResponse;
 import com.example.cinema_api.service.IMoviesService;
@@ -82,7 +83,7 @@ public class MovieController {
     })
     @PreAuthorize("hasAnyRole('ADMIN','CONTENT_MANAGER')")
     @PatchMapping("/{id}")
-    public ResponseEntity<MovieResponse> updateMovie(@PathVariable Long id, @Valid @RequestBody MovieRequest create){
+    public ResponseEntity<MovieResponse> updateMovie(@PathVariable Long id, @Valid @RequestBody MoviePatchRequest create){
         MovieResponse responseMovieDTO = moviesService.updateMovie(id, create);
         return ResponseEntity.status(HttpStatus.OK).body(responseMovieDTO);
     }

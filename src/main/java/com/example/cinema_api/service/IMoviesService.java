@@ -1,5 +1,6 @@
 package com.example.cinema_api.service;
 
+import com.example.cinema_api.dto.MoviePatchRequest;
 import com.example.cinema_api.dto.MovieRequest;
 import com.example.cinema_api.dto.MovieResponse;
 import org.springframework.data.domain.Page;
@@ -11,7 +12,7 @@ import java.util.List;
 public interface IMoviesService {
     MovieResponse uploadPoster(Long id, MultipartFile file);
     MovieResponse createMovie(MovieRequest create);
-    MovieResponse updateMovie(Long id, MovieRequest create);
+    MovieResponse updateMovie(Long id, MoviePatchRequest create);
     MovieResponse findMovieByTitle(String title);
     List<MovieResponse> findByFilmGenre(String filmGenre);
     Page<MovieResponse> findAllMovies(Pageable pageable);
