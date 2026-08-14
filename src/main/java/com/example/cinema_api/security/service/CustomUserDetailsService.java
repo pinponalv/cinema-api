@@ -1,8 +1,12 @@
 package com.example.cinema_api.security.service;
 
+import com.auth0.jwt.interfaces.DecodedJWT;
 import com.example.cinema_api.dto.AuthLoginRequest;
 import com.example.cinema_api.dto.AuthResponse;
+import com.example.cinema_api.entity.RefreshToken;
 import com.example.cinema_api.entity.UserSec;
+import com.example.cinema_api.exception.ResourceNotFoundException;
+import com.example.cinema_api.repository.RefreshTokenRepository;
 import com.example.cinema_api.repository.UserRepository;
 import com.example.cinema_api.security.jwt.JwtUtils;
 import lombok.RequiredArgsConstructor;
@@ -18,6 +22,7 @@ import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -28,6 +33,7 @@ public class CustomUserDetailsService implements UserDetailsService {
     private final UserRepository userRepository;
     private final JwtUtils jwtUtils;
     private final PasswordEncoder passwordEncoder;
+    private final RefreshTokenRepository refreshTokenRepository;
 
     @Override
     public UserDetails loadUserByUsername(String email) throws UsernameNotFoundException {
@@ -85,8 +91,64 @@ public class CustomUserDetailsService implements UserDetailsService {
 
         //save data en context holder
         SecurityContextHolder.getContext().setAuthentication(authentication);
-        String accessToken = jwtUtils.createToken(authentication);
-        AuthResponse response = new AuthResponse(email, "Login successful", accessToken, true);
+
+        String accessToken = jwtUtils.generateAccesToken(authentication);
+        String refreshToken = jwtUtils.generateRefreshToken(authentication);
+
+
+        DecodedJWT decodedJWT = jwtUtils.verifyToken(refreshToken);
+        UserSec user = userRepository.findByEmail(email).orElseThrow(() -> new UsernameNotFoundException("User not found"));
+        RefreshToken entity = new RefreshToken();
+        entity.setId(decodedJWT.getId()); //UUID que genere en JwtUtils
+        entity.setUserSec(user);
+        entity.setExpiresAt(LocalDateTime.now().plusDays(7));
+        refreshTokenRepository.save(entity);
+
+
+        AuthResponse response = new AuthResponse(email, "Login successful", accessToken,refreshToken, true);
         return response;
+    }
+
+    public AuthResponse refreshToken(String refreshToken) {
+        //verifico que el refreshToken sea un jwt valido
+        DecodedJWT decodedJWT = jwtUtils.verifyToken(refreshToken);
+
+        //extraigo el "type" que guardamos al crear el token (access/refresh)
+        String type = jwtUtils.getSpecificClaim(decodedJWT, "type").asString();
+        if(!"refresh".equals(type)) {
+            throw  new BadCredentialsException("Invalid token type. expected refresh token");
+        }
+
+        //Nuevo
+        RefreshToken stored = refreshTokenRepository.findById(decodedJWT.getId())
+                .orElseThrow(() -> new BadCredentialsException("refresh token not recognized"));
+        if(stored.isRevoked()){
+            throw   new BadCredentialsException("Refresh token has been revoked");
+        }
+
+        String email = jwtUtils.extractUser(decodedJWT);
+        UserDetails userDetails = this.loadUserByUsername(email);//cargo el usuario denuevo desde la base de datos en su estado actual
+
+        //armo un objeto authentication, (no pasa por login con password, porque no lo necesitamos, ya confiamos
+        //en el refreshToken validado arriba)
+        //el segundo parametro null es la password que no se aplica aqui
+        Authentication authentication = new UsernamePasswordAuthenticationToken(
+                email, null, userDetails.getAuthorities());
+
+        //genero un nuevo access token de accesso al usuario
+        String newAccessToken = jwtUtils.generateAccesToken(authentication);
+
+
+        //el refreshToken original se devuelve igual, no se genera uno nuevo
+        return new AuthResponse(email, "Token refreshed", newAccessToken, refreshToken, true);
+    }
+
+    public void revokeRefreshToken(String refreshToken) {
+        DecodedJWT decodedJWT = jwtUtils.verifyToken(refreshToken);
+        RefreshToken stored = refreshTokenRepository.findById(decodedJWT.getId())
+                .orElseThrow(() -> new ResourceNotFoundException("Refresh token not found"));
+
+        stored.setRevoked(true);
+        refreshTokenRepository.save(stored);
     }
 }

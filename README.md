@@ -22,7 +22,7 @@ API REST para la gestión de un cine, incluyendo películas, usuarios, autentica
 
 Cinema API expone operaciones CRUD sobre películas, usuarios, roles y permisos, con autenticación basada en JWT y autorización por rol (RBAC).
 
-- ✅ **Autenticación JWT** - Secure token-based authentication
+- ✅ **Autenticación JWT** - Access token (30 min) + Refresh token (7 días) para renovar la sesión sin volver a loguearse
 - ✅ **Control de Acceso basado en Roles (RBAC)** - Usuarios, roles y permisos
 - ✅ **Gestión de Películas** - CRUD completo, con búsqueda por título y por género
 - ✅ **Upload de Imágenes (Cloudinary)** - Subida del poster de cada película
@@ -180,24 +180,48 @@ http://localhost:8080/swagger-ui.html
 La mayoría de los endpoints requieren un token JWT. Para probarlos:
 
 1. Abrí el endpoint **`POST /api/auth/login`**, hacé clic en **"Try it out"** y enviá tus credenciales.
-2. Copiá el valor de `token` de la respuesta.
+2. Copiá el valor de `jwt` de la respuesta (es el access token).
 3. Hacé clic en el botón **"Authorize"** (ícono de candado, arriba a la derecha).
 4. Pegá el token (sin la palabra `Bearer`, Swagger la agrega solo) y confirmá.
 
 A partir de ahí, todos los endpoints que pruebes desde la UI van a incluir el token automáticamente en el header `Authorization`.
 
+### Renovar el token (Refresh Token)
+
+El login devuelve dos tokens:
+
+- **`jwt`** (access token): dura **30 minutos**, es el que se usa en cada request.
+- **`refreshToken`**: dura **7 días**, sirve únicamente para pedir un `jwt` nuevo sin tener que loguearte de nuevo.
+
+Cuando el `jwt` expira (pasados los 30 min), llamá a **`POST /api/auth/refresh`** con el `refreshToken` guardado:
+
+```json
+{
+  "refreshToken": "eyJhbGciOiJIUzI1NiIs..."
+}
+```
+
+La respuesta trae un `jwt` nuevo (con otros 30 minutos de vida) y el mismo `refreshToken` de siempre. En Swagger, tenés que volver a hacer clic en **"Authorize"** y pegar el `jwt` nuevo manualmente — Swagger no refresca el token solo.
+
+> El `refreshToken` no sirve para autenticar endpoints normales (`/api/movie`, `/api/user`, etc.) — si lo intentás usar ahí, la API lo rechaza. Solo es válido en `/api/auth/refresh`.
+
 ---
 
 ## 📋 Tareas Pendientes
 
-### 1. Testing (Media Prioridad)
+### 1. Autenticación (Media Prioridad)
+
+- [ ] Revocación de refresh tokens (logout real) - actualmente son stateless: si un `refreshToken` se filtra, sigue siendo válido hasta sus 7 días sin forma de invalidarlo antes
+- [ ] Expiración por inactividad (idle timeout)
+
+### 2. Testing (Media Prioridad)
 
 - [x] Pruebas unitarias para servicios
 - [ ] Pruebas de integración para endpoints
 - [ ] Pruebas de seguridad (autenticación, autorización)
 - [ ] Cobertura mínima: 80%
 
-### 2. Docker Deployment (Media Prioridad)
+### 3. Docker Deployment (Media Prioridad)
 
 - [ ] `Dockerfile` para la aplicación
 - [ ] `docker-compose.yml` con servicio de MySQL

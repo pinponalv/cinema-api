@@ -24,27 +24,46 @@ public class JwtUtils {
     @Value("${security.jwt.user.generator}")
     private String userGenerator;
 
-    public String createToken(Authentication authentication) {
-        Algorithm algorithm = Algorithm.HMAC256(privateKey);
+    private static final long accessTokenExpiration = 1800000; //30 minutes
+    private static final long refreshTokenExpiration = 604800000; //7 days
 
-        //obtengo el usuario que se quiere registrar
-        String getUser = authentication.getPrincipal().toString();
+    public String generateAccesToken(Authentication authentication) {
+        return buildToken(authentication, accessTokenExpiration, "access");
+    }
+
+    public String generateRefreshToken(Authentication authentication) {
+        return buildToken(authentication, refreshTokenExpiration, "refresh");
+    }
+
+
+    private String buildToken(Authentication authentication, long expirationMs, String tokenType) {
+        Algorithm algorithm = Algorithm.HMAC256(privateKey);
+        String getUser = authentication.getPrincipal().toString(); //usuario que se quiere autenticar
 
         String getAuthorities = authentication.getAuthorities()
                 .stream()
                 .map(GrantedAuthority::getAuthority)
                 .collect(Collectors.joining(","));
 
-        String generateToken = JWT.create()
-                .withIssuer(this.userGenerator) //el usuario que genera el nombre (pinpon)
-                .withSubject(getUser) //usuario al que se le genera el token
-                .withClaim("authorities", getAuthorities) //datos traidos del jwt
+        //header.payload.signature son las 3 partes de un jwt
+        /**Notas para withClaim("type", tokenType):
+         * "type" funciona como una etiqueta/nombre, pudo a ver llevado cualquier otro nombre como "banana"
+         * "type" es como quedara guardado dentor del jwt de esta manera:
+         * {
+         *     "type" : "access" o "refresh"
+         * }
+         * **/
+        return JWT.create()
+                .withIssuer(this.userGenerator) //el usuario que emite el token (pinpon)
+                .withSubject(getUser)//usuario al que se le genera el token
+                .withClaim("authorities", getAuthorities)//roles y permisos que tiene el usuario
+                .withClaim("type", tokenType) //distingue entre access o refresh segun que metodo lo llame
                 .withIssuedAt(new Date()) //fecha de creacion
-                .withExpiresAt(new Date(System.currentTimeMillis() + 1800000)) //vence en 30min el token
-                .withJWTId(UUID.randomUUID().toString()) //genero un id random y lo paso a string
+                .withExpiresAt(new Date(System.currentTimeMillis() + expirationMs))
+                .withJWTId(UUID.randomUUID().toString())
                 .withNotBefore(new Date()) //valido para usar cuando se crea
-                .sign(algorithm);
-        return generateToken;
+                .sign(algorithm); //firmo criptograficamente el payload con el algoritmo
+
     }
 
     //decodificar y validar token

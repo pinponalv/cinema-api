@@ -40,6 +40,13 @@ public class JwtTokenValidator extends OncePerRequestFilter {
                 //validate token
                 DecodedJWT decodedJWT = jwtUtils.verifyToken(token);
 
+                String type =  jwtUtils.getSpecificClaim(decodedJWT,"type").asString();
+                if(!"access".equals(type)) {
+                    SecurityContextHolder.clearContext();
+                    chain.doFilter(request, response);
+                    return;
+                }
+
                 //damos acceso si el token es valido
                 String user = jwtUtils.extractUser(decodedJWT);
                 String authorities = jwtUtils.getSpecificClaim(decodedJWT, "authorities").asString();

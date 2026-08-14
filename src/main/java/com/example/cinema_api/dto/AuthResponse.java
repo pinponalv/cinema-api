@@ -3,7 +3,7 @@ package com.example.cinema_api.dto;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 
 @JsonPropertyOrder({"email", "message", "status"})
-public record AuthResponse(String email, String message,String jwt, boolean status){
+public record AuthResponse(String email, String message,String jwt, String refreshToken, boolean status){
     /*
      * Va hacer casi lo mismo que el AuthLoginRequestDTO
      * En la respuesta vamos a tener que mandar el nombre de usuario
