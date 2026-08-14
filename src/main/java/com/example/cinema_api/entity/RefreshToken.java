@@ -18,7 +18,8 @@ public class RefreshToken {
     @Id
     private String id;
 
-    @ManyToOne(nullable = false, name = "user_id")
+    @ManyToOne()
+    @JoinColumn(name = "user_id",  nullable = false)
     private UserSec userSec;
     @Column(nullable = false)
     private LocalDateTime expiresAt;
