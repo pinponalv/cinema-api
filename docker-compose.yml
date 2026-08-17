@@ -1,0 +1,29 @@
+services:
+  mysql:
+    image: mysql:8.0
+    container_name: cinema-mysql
+    environment:
+      MYSQL_DATABASE: cinema-api
+      MYSQL_ROOT_PASSWORD: root
+    ports:
+      - "3306:3306"
+    volumes:
+      - mysql_data:/var/lib/mysql
+  app:
+    build: .
+    container_name: cinema-api
+    ports:
+      - "8080:8080"
+    depends_on:
+      - mysql
+    environment:
+      BD_URL: jdbc:mysql://mysql:3306/cinema-api
+      BD_USER: ${BD_USER}
+      BD_PASSWORD: ${BD_PASSWORD}
+      PRIVATE_KEY: ${PRIVATE_KEY}
+      USER_GENERATOR: ${USER_GENERATOR}
+      CLOUD_NAME: ${CLOUD_NAME}
+      CLOUD_KEY: ${CLOUD_KEY}
+      CLOUD_SECRET: ${CLOUD_SECRET}
+volumes:
+  mysql_data:
