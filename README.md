@@ -119,21 +119,34 @@ CREATE DATABASE `cinema-api`;
 
 ### 3. Configurar credenciales
 
-Editá `src/main/resources/application.properties` con tus credenciales de MySQL:
+`application.properties` no tiene credenciales hardcodeadas — las lee desde **variables de entorno**. Necesitás definir las siguientes antes de correr la aplicación:
 
-```properties
-spring.datasource.url=jdbc:mysql://localhost:3306/cinema-api
-spring.datasource.username=root
-spring.datasource.password=tu_contraseña
+| Variable | Descripción | Ejemplo |
+|---|---|---|
+| `BD_URL` | URL de conexión a MySQL | `jdbc:mysql://localhost:3306/cinema-api` |
+| `BD_USER` | Usuario de MySQL | `root` |
+| `BD_PASSWORD` | Contraseña de MySQL | `tu_contraseña` |
+| `PRIVATE_KEY` | Clave secreta para firmar los JWT (cualquier string largo random) | `openssl rand -hex 32` |
+| `USER_GENERATOR` | Nombre del issuer del JWT (puede ser cualquier valor) | `cinema-api` |
+| `CLOUD_NAME` | Cloud name de [Cloudinary](https://cloudinary.com/users/register/free) (cuenta gratuita) | - |
+| `CLOUD_KEY` | API key de Cloudinary | - |
+| `CLOUD_SECRET` | API secret de Cloudinary | - |
+
+**Opción A — exportarlas en tu shell:**
+```bash
+export BD_URL="jdbc:mysql://localhost:3306/cinema-api"
+export BD_USER="root"
+export BD_PASSWORD="tu_contraseña"
+export PRIVATE_KEY="$(openssl rand -hex 32)"
+export USER_GENERATOR="cinema-api"
+export CLOUD_NAME="tu_cloud_name"
+export CLOUD_KEY="tu_api_key"
+export CLOUD_SECRET="tu_api_secret"
 ```
 
-Y con tus credenciales de [Cloudinary](https://cloudinary.com/users/register/free) (cuenta gratuita, necesaria para subir posters de películas):
+**Opción B — configurarlas en tu IDE** (IntelliJ: Run Configuration → Environment variables).
 
-```properties
-cloudinary.cloud.name=tu_cloud_name
-cloudinary.api.key=tu_api_key
-cloudinary.api.secret=tu_api_secret
-```
+> ⚠️ Nunca subas estos valores reales a `application.properties` ni los commitees a git — es lo que este proyecto evita a propósito usando `${VARIABLE}`.
 
 ### 4. Cargar datos iniciales (seeder)
 
